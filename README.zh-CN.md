@@ -88,6 +88,28 @@ herdr plugin action invoke hhdebb.herdr-radar.state-start
 
 `plugin link` 不跑构建步骤，同样的初始化由守护进程首次启动时完成，第三行就是为此。
 
+### 或者交给 agent 装
+
+把下面这段粘给任意编码 agent，它就知道怎么装：
+
+```text
+在这台机器上安装 Herdr 的 herdr-radar 插件。
+
+1. herdr plugin install hhdebb/herdr-radar
+2. herdr plugin action invoke hhdebb.herdr-radar.state-start
+3. 确认装上了：`herdr plugin list` 里 hhdebb.herdr-radar 是 enabled，
+   并且 `herdr agent list` 里跑着 agent 的面板带上了 `sort_key` token
+   （这个 token 与状态无关一直都在；徽标那个 token 的名字会随状态变）。
+
+不要执行 `herdr server stop`，也不要杀 Herdr 进程。那会结束所有面板里的
+所有程序，包括正在跑你的那个。这里没有任何一步需要重启：插件首次启动会自己
+完成配置，新开的终端窗口会自己认到图标字体。
+
+需要 Herdr 0.9.0 以上和 Node 18 以上。如果标记显示成方框，是这个终端没有
+对应的码位映射 —— 这种情况和其余问题都在 https://github.com/hhdebb/herdr-radar
+的 Troubleshooting 一节里。
+```
+
 ## 侧边栏长什么样
 
 ```

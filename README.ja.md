@@ -95,6 +95,31 @@ herdr plugin action invoke hhdebb.herdr-radar.state-start
 `plugin link` はビルド手順を実行しません。同じセットアップはデーモンの初回起動が行うので、
 3 行目が必要です。
 
+### エージェントに任せる
+
+次のひとかたまりをコーディングエージェントに貼れば、そのままインストールします:
+
+```text
+このマシンに Herdr のプラグイン herdr-radar をインストールしてください。
+
+1. herdr plugin install hhdebb/herdr-radar
+2. herdr plugin action invoke hhdebb.herdr-radar.state-start
+3. 確認: `herdr plugin list` で hhdebb.herdr-radar が enabled になっていること、
+   `herdr agent list` でエージェントが動いているペインに `sort_key` トークンが
+   付いていること（これは状態によらず必ず書かれます。ロゴのトークン名は
+   状態によって変わります）。
+
+`herdr server stop` は実行しないでください。Herdr のプロセスも終了させないで
+ください。すべてのペインのすべてのプログラムが終了します（あなたを動かして
+いるものも含みます）。再起動が必要な手順はひとつもありません。プラグインは
+初回起動時に自分で設定を書き、アイコンフォントは新しい端末ウィンドウが
+自動的に読み込みます。
+
+Herdr 0.9.0 以降と Node 18 以降が必要です。マークが四角で表示される場合は、
+その端末にコードポイントマップがありません。この件を含め
+https://github.com/hhdebb/herdr-radar の Troubleshooting を参照してください。
+```
+
 ## サイドバーの見え方
 
 ```

@@ -96,6 +96,30 @@ herdr plugin action invoke hhdebb.herdr-radar.state-start
 `plugin link` runs no build step; the daemon does the same setup on its first start, which is
 what the third line is for.
 
+### Or hand it to an agent
+
+Paste this at a coding agent and it will do the install:
+
+```text
+Install the herdr-radar plugin for Herdr on this machine.
+
+1. herdr plugin install hhdebb/herdr-radar
+2. herdr plugin action invoke hhdebb.herdr-radar.state-start
+3. Check it took: `herdr plugin list` shows hhdebb.herdr-radar as enabled, and
+   `herdr agent list` shows a `sort_key` token on the panes that run an agent
+   (that one is written whatever state a pane is in; the logo token's name
+   changes with the state).
+
+Do NOT run `herdr server stop`, and do not kill the Herdr process. That ends
+every program in every pane, including whatever is running you. Nothing here
+needs a restart: the plugin configures itself on first start, and new terminal
+windows pick up the icon font on their own.
+
+Needs Herdr 0.9.0 or newer and Node 18 or newer. If the marks come out as
+boxes, the terminal has no codepoint map for them — that case and the rest are
+covered under Troubleshooting at https://github.com/hhdebb/herdr-radar
+```
+
 ## What the sidebar looks like
 
 ```
