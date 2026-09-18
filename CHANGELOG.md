@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.3.6 — 2026-09-19
+
+- **A mark for GLM, and a way for a pane to say what it is.** A GLM session runs
+  the stock `claude` binary against an Anthropic-compatible endpoint, so Herdr
+  detects `claude` — correctly, and permanently: identity comes from the process
+  name matched against a set compiled into Herdr, and the wrapper execs the same
+  binary everyone else does. Detection cannot see through that and neither can
+  this plugin; what a pane is doing is known only to whoever started it.
+
+  So the pane says so. Herdr carries a display-only `display_agent` field for
+  exactly this, and one line before the `exec` fills it in:
+
+  ```sh
+  herdr pane report-metadata "$HERDR_PANE_ID" --source user:cglm --display-agent glm
+  ```
+
+  The sidebar now prefers that value — but only when it names a vendor this
+  plugin can draw. The field is free text (Herdr's own example is `Claude: auth`)
+  while every consumer of the name treats it as a vendor key, so anything else
+  falls through and the row keeps the mark detection gave it. This is not a GLM
+  feature: any wrapper around a known binary can use it, and the plugin keeps no
+  detection rules of its own.
+
+  The mark is Z.ai's, at E1B7, solved to the same 920 longest edge as every other
+  vendor and monochrome as published, so it takes the row's ink.
+
+  Reported in [#3](https://github.com/hhdebb/herdr-radar/issues/3) by
+  @deliriumlabs.
+
+- **The font's codepoint map no longer has to be remembered.** The installer
+  tells the terminal which codepoints to take from our font, and that list was
+  written down by hand. The 24th vendor landed at E1B7, one past the end: the
+  terminal would have kept looking in its own font and drawn nothing, while
+  `install-font` reported success. The vendor range is derived from the glyph
+  table now, and `npm run check` reads `tools/codepoints.toml` back and fails if
+  either range stops covering what the font defines.
+
 ## 1.3.5 — 2026-09-17
 
 - **The stale tier no longer fades itself out of existence.** Five cells asked
