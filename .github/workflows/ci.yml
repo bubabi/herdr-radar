@@ -59,8 +59,9 @@ jobs:
       # anywhere.
       #
       # The icon font is byte-reproducible (FONT_TIMESTAMP is fixed for exactly
-      # this), so rebuilding and diffing it is an exact test. The patched face
-      # is not: two consecutive builds of it differ, so a byte diff there would
+      # this) as long as fontTools does not move under it, which is why
+      # requirements.txt pins rather than floors it — so rebuilding and diffing
+      # it is an exact test. The patched face is not reproducible at all: two consecutive builds of it differ, so a byte diff there would
       # fail on every run and teach everyone to ignore this job. It carries its
       # own answer instead — build_patched_font.py stamps nameID 3 with a hash
       # of the icon font it copied from, so comparing that stamp against the
