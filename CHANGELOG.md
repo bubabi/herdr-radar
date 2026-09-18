@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.3.7 — 2026-09-19
+
+- **Workspace indices can follow the panel's order.** Radar sorts the Agents
+  panel by activity, but the indexed workspace jump walks Herdr's own workspace
+  list — so the row you see first and the workspace the key reaches are not the
+  same one. A plugin cannot rebind that key, so with `reorder_workspaces = true`
+  the workspaces themselves move instead, and the Spaces list reads in the same
+  order as the panel.
+
+  Worktree families move whole, parent first; workspaces with nothing running
+  keep their relative order at the end. It stops while the panel is handed back
+  to Herdr's own order, because reordering there would recreate the same
+  disagreement the other way round.
+
+  Off by default. It changes Herdr's *global* Spaces order, which every
+  connected client sees, and the order then moves as you work — the number that
+  reaches a project today is not the one that reaches it tomorrow.
+
+  Note that Herdr leaves `switch_workspace` **unbound by default** (`switch_tab`
+  ships as `prefix+1..9`; the workspace jump does not ship at all), so the keys
+  do nothing until you bind them. The README shows the binding.
+
+  From [#6](https://github.com/hhdebb/herdr-radar/pull/6), by @erkangurel.
+
 ## 1.3.6 — 2026-09-19
 
 - **A mark for GLM, and a way for a pane to say what it is.** A GLM session runs
