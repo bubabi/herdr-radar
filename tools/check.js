@@ -140,6 +140,48 @@ for (const { name, point } of declared) {
   }
 }
 
+// Reordering workspaces has to settle. The module moves them, Herdr emits
+// workspace.reordered, the frame wakes and asks again — so if feeding the
+// result back in ever produces a different list, that is not a wrong order,
+// it is an infinite write loop over IPC. Idempotence is the whole safety
+// argument for the feature, so it is checked rather than assumed.
+//
+// Randomised because the interesting cases are interactions: families whose
+// members start apart, a parent with no key of its own, ties, and parent links
+// that happen to form a cycle.
+const { desiredOrder } = require('../lib/workspace-order');
+const ids = ['w1', 'w2', 'w3', 'w4', 'w5', 'w6'];
+let unstable = null;
+for (let i = 0; i < 200 && !unstable; i += 1) {
+  const order = [...ids].sort(() => Math.random() - 0.5);
+  const keys = new Map();
+  const parents = new Map();
+  for (const id of ids) {
+    if (Math.random() < 0.7) keys.set(id, String(Math.floor(Math.random() * 4)).padStart(3, '0'));
+    if (Math.random() < 0.25) {
+      const parent = ids[Math.floor(Math.random() * ids.length)];
+      if (parent !== id) parents.set(id, parent);
+    }
+  }
+  try {
+    const once = desiredOrder(order, keys, parents);
+    const twice = desiredOrder(once, keys, parents);
+    if (once.join() !== twice.join()) {
+      unstable = `once=${once.join(',')} twice=${twice.join(',')}`;
+    } else if ([...once].sort().join() !== [...order].sort().join()) {
+      unstable = `membership changed: in=${order.join(',')} out=${once.join(',')}`;
+    }
+  } catch (error) {
+    unstable = `threw: ${error.message}`;
+  }
+  if (unstable) {
+    unstable += `\n  order=${order.join(',')} keys=${JSON.stringify([...keys])} parents=${JSON.stringify([...parents])}`;
+  }
+}
+if (unstable) {
+  problems.push(`workspace order: desiredOrder is not idempotent — ${unstable}`);
+}
+
 if (problems.length) {
   console.error(problems.join('\n'));
   process.exit(1);

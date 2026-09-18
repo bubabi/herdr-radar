@@ -219,8 +219,20 @@ the config file and restarts the daemon.
 | `colors.active_row_bg_dark` | `#414868` | selected-row fill for a dark theme |
 
 Set `reorder_workspaces = true` to make Herdr's actual workspace order follow Radar's
-most-active-first order. This also changes which workspace `prefix+shift+1..9` selects;
-worktree families stay together. It is off by default because it changes the global Spaces order.
+most-active-first order, so the Spaces list reads in the same order as the Agents panel and
+the indexed jump lands on the row you are looking at. Worktree families stay together;
+workspaces with nothing running keep their relative order at the end, and the reorder stops
+while the panel is handed back to Herdr's own order. It is off by default because it changes
+the global Spaces order, which every connected client sees, and because the order then moves
+as you work — the number that reaches a project today is not the one that reaches it tomorrow.
+
+Herdr leaves the workspace jump **unbound by default** — `switch_tab` ships as `prefix+1..9`,
+the workspace one does not ship at all — so bind it before expecting the keys to do anything:
+
+```toml
+[keys]
+switch_workspace = "prefix+shift+1..9"
+```
 
 The first two are live state; the rest live in
 `$(herdr plugin config-dir hhdebb.herdr-radar)/config.toml` and can be edited by hand —
