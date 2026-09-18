@@ -113,6 +113,33 @@ for (const [variant, panel] of Object.entries(PANELS)) {
   }
 }
 
+// Every glyph the font defines has to fall inside a range the installer maps.
+//
+// The terminal only looks in our font for the codepoints we tell it about, so a
+// glyph outside those ranges is drawn from whatever the terminal had — which is
+// nothing, silently, while install-font reports success. Adding the 24th vendor
+// at E1B7 did exactly that: one past the end of a range written down by hand.
+// Read the codepoints back out of the source of truth rather than trusting two
+// places to agree.
+const codepointsToml = fs.readFileSync(path.join(root, 'tools', 'codepoints.toml'), 'utf8');
+const glyphSection = codepointsToml.split(/^\[fit\]/m)[0];
+const declared = [...glyphSection.matchAll(/^([a-z_][a-z0-9_]*)\s*=\s*"([0-9A-Fa-f]{4})"/gm)].map(([, name, hex]) => ({
+  name,
+  point: parseInt(hex, 16),
+}));
+if (declared.length === 0) {
+  problems.push('codepoints.toml: no glyph assignments found — did the file move?');
+}
+const mapped = require('../lib/font').RANGES.map(([lo, hi]) => [parseInt(lo, 16), parseInt(hi, 16)]);
+for (const { name, point } of declared) {
+  if (!mapped.some(([lo, hi]) => point >= lo && point <= hi)) {
+    problems.push(
+      `codepoints.toml: ${name} at U+${point.toString(16).toUpperCase()} is outside every ` +
+        'range install-font maps, so the terminal will never look for it',
+    );
+  }
+}
+
 if (problems.length) {
   console.error(problems.join('\n'));
   process.exit(1);
