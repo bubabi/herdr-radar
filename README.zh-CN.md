@@ -145,16 +145,32 @@ Spaces 那一列用的是同一套厂商色，所以在那边也分得出哪个�
 | --- | --- | --- | --- |
 | <img src="assets/marks/amp.svg" width="15" align="top"> Amp | <img src="assets/marks/agy.svg" width="15" align="top"> Antigravity | <img src="assets/marks/claude.svg" width="15" align="top"> Claude Code | <img src="assets/marks/cline.svg" width="15" align="top"> Cline |
 | <img src="assets/marks/codex.svg" width="15" align="top"> Codex | <img src="assets/marks/copilot.svg" width="15" align="top"> Copilot | <img src="assets/marks/cursor.svg" width="15" align="top"> Cursor | <img src="assets/marks/deepseek.svg" width="15" align="top"> DeepSeek |
-| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT | <img src="assets/marks/grok.svg" width="15" align="top"> Grok |
-| <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi | <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro |
-| <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh | <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode |
-| <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |  |
+| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/glm.svg" width="15" align="top"> GLM | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT |
+| <img src="assets/marks/grok.svg" width="15" align="top"> Grok | <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi |
+| <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro | <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh |
+| <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode | <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |
 
-Herdr 还认得另外两家，Droid 和 Muse，这两家都没有本项目能用的公开标记。它们的行跟别的行一样
+Herdr 还认得另外三家，Droid、Letta 和 Muse，这三家都没有本项目能用的公开标记。它们的行跟别的行一样
 工作 —— 状态、颜色、排序、分组都正常 —— 只是穿的是通用标记而不是自己的。欢迎发 PR 把它们补上；
 Antigravity 和 Kiro 的标记就是这么来的。
 
 Herdr 认得而这里没列出的，显示方式也一样：通用标记、一个自己的颜色，其余一切照常。
+
+### 当进程名不等于厂商
+
+GLM 的会话跑的是原装 `claude` 二进制，只是指向了一个 Anthropic 兼容的端点，所以 Herdr
+检测出来就是 `claude` —— 没错，而且永远如此。任何包装已知二进制的做法都一样。检测看不穿
+这一层，本插件也看不穿：这个面板在干什么，只有启动它的人知道。
+
+那就让包装脚本自己说。Herdr 留了一个纯显示用的字段，`exec` 之前加一行就够：
+
+```sh
+herdr pane report-metadata "$HERDR_PANE_ID" --source user:cglm --display-agent glm
+exec claude "$@"
+```
+
+这一行随即换上 GLM 的标记和名字。`--clear-display-agent` 撤销。本插件不认得的值会被忽略
+而不是把行清空，所以像 `Claude: auth` 这种人话标签仍然保留 Claude 的标记。
 
 ## 设置
 

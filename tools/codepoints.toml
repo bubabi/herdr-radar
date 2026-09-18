@@ -27,8 +27,14 @@ kiro = "E1B3"
 amp = "E1B4"
 devin = "E1B5"
 qodercli = "E1B6"
+# GLM, keyed by the model family users know rather than the org (Z.ai,
+# formerly Zhipu) — it reads naturally next to deepseek and qwen. Herdr
+# cannot detect these panes: a GLM session runs the stock `claude` binary
+# against an Anthropic-compatible endpoint, so the process name is
+# `claude`. The pane says what it is instead, through `display_agent`.
+glm = "E1B7"
 
-# Lifecycle states. E1B4-E1BF stays free for future vendor marks.
+# Lifecycle states. E1B8-E1BF stays free for future vendor marks.
 state_done = "E1C0"
 state_blocked = "E1C1"
 state_idle = "E1C2"
@@ -96,3 +102,4 @@ kiro = 1.35
 amp = 1.64
 devin = 1.43
 qodercli = 1.60
+glm = 1.64

@@ -160,18 +160,37 @@ Twenty-three vendors have a mark of their own:
 | --- | --- | --- | --- |
 | <img src="assets/marks/amp.svg" width="15" align="top"> Amp | <img src="assets/marks/agy.svg" width="15" align="top"> Antigravity | <img src="assets/marks/claude.svg" width="15" align="top"> Claude Code | <img src="assets/marks/cline.svg" width="15" align="top"> Cline |
 | <img src="assets/marks/codex.svg" width="15" align="top"> Codex | <img src="assets/marks/copilot.svg" width="15" align="top"> Copilot | <img src="assets/marks/cursor.svg" width="15" align="top"> Cursor | <img src="assets/marks/deepseek.svg" width="15" align="top"> DeepSeek |
-| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT | <img src="assets/marks/grok.svg" width="15" align="top"> Grok |
-| <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi | <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro |
-| <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh | <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode |
-| <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |  |
+| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/glm.svg" width="15" align="top"> GLM | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT |
+| <img src="assets/marks/grok.svg" width="15" align="top"> Grok | <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi |
+| <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro | <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh |
+| <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode | <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |
 
-Herdr detects two more, Droid and Muse, and neither publishes a mark this project can use.
+Herdr detects three more — Droid, Letta and Muse — and none publishes a mark this project can use.
 Those rows behave like any other — state, colour, ordering, grouping — they just wear the
 generic mark instead of one of their own. A pull request adding either is welcome; the marks
 for Antigravity and Kiro arrived that way.
 
 Anything else Herdr recognises is shown the same way: the generic mark, a colour of its own,
 and everything else intact.
+
+### When the process name is not the vendor
+
+A GLM session runs the stock `claude` binary against an Anthropic-compatible endpoint, so
+Herdr detects `claude` — correctly, and always will. The same is true of any wrapper around
+a known binary. Detection cannot see through that, and neither can this plugin: what the
+pane is doing is known only to whoever started it.
+
+So let the wrapper say so. Herdr keeps a display-only field for exactly this, and one line
+before the `exec` fills it in:
+
+```sh
+herdr pane report-metadata "$HERDR_PANE_ID" --source user:cglm --display-agent glm
+exec claude "$@"
+```
+
+The row then wears the GLM mark and name. `--clear-display-agent` takes it back. A value
+this plugin does not recognise is ignored rather than blanking the row, so a human label
+such as `Claude: auth` still leaves the Claude mark in place.
 
 ## Settings
 

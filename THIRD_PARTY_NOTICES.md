@@ -28,9 +28,10 @@ Font marks in `assets/svg/` are sourced from the following projects. Marks ident
 | grok | xAI Grok (proprietary) |
 | agy | Google Antigravity (proprietary) |
 | kiro | AWS Kiro (proprietary) |
+| glm | Z.ai / GLM (proprietary) |
 
 Marks for `cursor`, `opencode`, `hermes`, `copilot`, `deepseek`, `gemini`,
-`gpt`, `qwen`, `agy`, and `kiro` were taken from [lobehub/lobe-icons](https://github.com/lobehub/lobe-icons)
+`gpt`, `qwen`, `agy`, `kiro`, and `glm` were taken from [lobehub/lobe-icons](https://github.com/lobehub/lobe-icons)
 (MIT) and re-normalized to bare `<path>` geometry. The MIT license covers that
 project's packaging, not the trademarks of the depicted brands.
 

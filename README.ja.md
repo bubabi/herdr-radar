@@ -158,18 +158,37 @@ Spaces 列も同じベンダー色を使うので、どのワークスペース�
 | --- | --- | --- | --- |
 | <img src="assets/marks/amp.svg" width="15" align="top"> Amp | <img src="assets/marks/agy.svg" width="15" align="top"> Antigravity | <img src="assets/marks/claude.svg" width="15" align="top"> Claude Code | <img src="assets/marks/cline.svg" width="15" align="top"> Cline |
 | <img src="assets/marks/codex.svg" width="15" align="top"> Codex | <img src="assets/marks/copilot.svg" width="15" align="top"> Copilot | <img src="assets/marks/cursor.svg" width="15" align="top"> Cursor | <img src="assets/marks/deepseek.svg" width="15" align="top"> DeepSeek |
-| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT | <img src="assets/marks/grok.svg" width="15" align="top"> Grok |
-| <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi | <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro |
-| <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh | <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode |
-| <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |  |
+| <img src="assets/marks/devin.svg" width="15" align="top"> Devin | <img src="assets/marks/gemini.svg" width="15" align="top"> Gemini | <img src="assets/marks/glm.svg" width="15" align="top"> GLM | <img src="assets/marks/gpt.svg" width="15" align="top"> GPT |
+| <img src="assets/marks/grok.svg" width="15" align="top"> Grok | <img src="assets/marks/hermes.svg" width="15" align="top"> Hermes | <img src="assets/marks/kilo.svg" width="15" align="top"> Kilo | <img src="assets/marks/kimi.svg" width="15" align="top"> Kimi |
+| <img src="assets/marks/kiro.svg" width="15" align="top"> Kiro | <img src="assets/marks/maki.svg" width="15" align="top"> Maki | <img src="assets/marks/mastracode.svg" width="15" align="top"> Mastra | <img src="assets/marks/omp.svg" width="15" align="top"> OhMyPosh |
+| <img src="assets/marks/opencode.svg" width="15" align="top"> OpenCode | <img src="assets/marks/pi.svg" width="15" align="top"> Pi | <img src="assets/marks/qodercli.svg" width="15" align="top"> Qoder | <img src="assets/marks/qwen.svg" width="15" align="top"> Qwen |
 
-Herdr はさらに 2 つ、Droid と Muse を検出しますが、どちらもこのプロジェクトが使える形で
+Herdr はさらに 3 つ、Droid と Letta と Muse を検出しますが、いずれもこのプロジェクトが使える形で
 マークを公開していません。それらの行も他と同じように動作し —— 状態も色も並び順もグループ化も
 そのまま —— 独自のマークの代わりに汎用マークをまとうだけです。どちらかを追加するプルリクエストは
 歓迎します。Antigravity と Kiro のマークもそうして届きました。
 
 Herdr が認識してここに挙がっていないものも同じ扱いです：汎用マーク、独自の色、それ以外はすべて
 そのまま。
+
+### プロセス名がベンダーと一致しないとき
+
+GLM のセッションは素の `claude` バイナリを Anthropic 互換エンドポイントに向けて実行するため、
+Herdr は `claude` と検出します。これは正しく、これからも変わりません。既知のバイナリを包む
+ラッパーはすべて同じです。検出はその先を見通せず、このプラグインも同じです。そのペインが何を
+しているかは、起動した本人だけが知っています。
+
+ならばラッパー自身に名乗らせます。Herdr には表示専用のフィールドがあり、`exec` の前に
+1 行足すだけです:
+
+```sh
+herdr pane report-metadata "$HERDR_PANE_ID" --source user:cglm --display-agent glm
+exec claude "$@"
+```
+
+その行は GLM のマークと名前をまといます。`--clear-display-agent` で元に戻ります。この
+プラグインが認識しない値は行を空にせず無視されるので、`Claude: auth` のような人間向けの
+ラベルでも Claude のマークはそのまま残ります。
 
 ## 設定
 
