@@ -238,9 +238,13 @@ exec claude "$@"
 
 这段私有区被别的字体抢了，CJK 字体尤其常见。终端必须按码位映射到 `Herdr Agent Icons Max`，
 只加进 fallback 家族不够。Ghostty / kitty 跑一次 `herdr plugin action invoke hhdebb.herdr-radar.install-font`
-就写好了；其他终端手动映射 `U+E1A0–U+E1B3` 和 `U+E1C0–U+E1D1`。没有按码位映射能力的终端
+就写好了；其他终端手动映射 `U+E1A0–U+E1B7` 和 `U+E1C0–U+E1C5`。没有按码位映射能力的终端
 （Windows Terminal、iTerm）改用 `dist/JetBrainsMonoHerdr-Regular.ttf` 当主字体，它是打进了
 图标的 JetBrains Mono。
+
+Ghostty 上只有 `ghostty +show-face` 能说明映射到底生没生效，`+show-config` 和 `+list-fonts`
+两种情况下都一样通过。v1.3.7 及以前写进去的那行是失效的（家族名带了引号），
+重跑一次安装动作即可。
 </details>
 
 <details>

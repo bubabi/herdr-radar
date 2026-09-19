@@ -144,13 +144,42 @@ const declared = [...glyphSection.matchAll(/^([a-z_][a-z0-9_]*)\s*=\s*"([0-9A-Fa
 if (declared.length === 0) {
   problems.push('codepoints.toml: no glyph assignments found — did the file move?');
 }
-const mapped = require('../lib/font').RANGES.map(([lo, hi]) => [parseInt(lo, 16), parseInt(hi, 16)]);
+const { RANGES } = require('../lib/font');
+const mapped = RANGES.map(([lo, hi]) => [parseInt(lo, 16), parseInt(hi, 16)]);
 for (const { name, point } of declared) {
   if (!mapped.some(([lo, hi]) => point >= lo && point <= hi)) {
     problems.push(
       `codepoints.toml: ${name} at U+${point.toString(16).toUpperCase()} is outside every ` +
         'range install-font maps, so the terminal will never look for it',
     );
+  }
+}
+
+// The ranges the READMEs print have to be the ranges the installer maps.
+//
+// A user on a terminal we do not write config for reads them and maps by hand,
+// so a stale range there is a silently half-drawn sidebar for exactly the people
+// who cannot check it against anything. All three said E1A0-E1B3 long after the
+// 24th vendor moved the end to E1B7, and the Chinese one had drifted to E1D1 on
+// the second range as well. Derived, because prose does not get recompiled.
+const documented = RANGES.map(([lo, hi]) => `U+${lo}\u2013U+${hi}`);
+for (const name of ['README.md', 'README.zh-CN.md', 'README.ja.md']) {
+  const prose = fs.readFileSync(path.join(root, name), 'utf8');
+  // A hyphen is the same range typed on a keyboard without an en dash.
+  const printed = [...prose.matchAll(/U\+[0-9A-F]{4}[\u2013-]U\+[0-9A-F]{4}/g)].map(([text]) =>
+    text.replace('-', '\u2013'),
+  );
+  for (const range of printed) {
+    if (!documented.includes(range)) {
+      problems.push(
+        `${name}: documents ${range}, which install-font does not map (it maps ${documented.join(' and ')})`,
+      );
+    }
+  }
+  for (const range of documented) {
+    if (!printed.includes(range)) {
+      problems.push(`${name}: never tells a user to map ${range}`);
+    }
   }
 }
 

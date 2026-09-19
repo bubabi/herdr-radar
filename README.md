@@ -281,9 +281,13 @@ terminal and reopen it. macOS keeps an extra cache: `killall fontd fontworker`, 
 Another font claimed the same Private Use Area — CJK fonts often do. The terminal must map the
 codepoints to `Herdr Agent Icons Max`; adding it as a fallback family is not enough. Ghostty /
 kitty: `herdr plugin action invoke hhdebb.herdr-radar.install-font` writes the map. Other
-terminals: map `U+E1A0–U+E1B3` and `U+E1C0–U+E1C5` by hand. Terminals with no codepoint map
+terminals: map `U+E1A0–U+E1B7` and `U+E1C0–U+E1C5` by hand. Terminals with no codepoint map
 (Windows Terminal, iTerm): use `dist/JetBrainsMonoHerdr-Regular.ttf` as the terminal font —
 JetBrains Mono with the icons patched in.
+
+On Ghostty, `ghostty +show-face` is the only command that says whether the map resolved;
+`+show-config` and `+list-fonts` pass either way. The map written by v1.3.7 and earlier was
+inert — it quoted the family name, so run the install action once more.
 </details>
 
 <details>
