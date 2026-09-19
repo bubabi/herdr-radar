@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.3.8 — 2026-09-19
+
+- **The Ghostty codepoint map now matches.** Since v1.0.0 the installer wrote
+  `font-codepoint-map = U+E1A0-U+E1B7="Herdr Agent Icons Max"`, and Ghostty
+  reads that value literally: the quotes were part of the family name it looked
+  for, no such family exists, and the two ranges fell through to whatever else
+  claims the Private Use Area — on most systems a CJK font. Every obvious check
+  passed while it was broken: the font installed, `+list-fonts` found it,
+  `+show-config` printed the map. Only `ghostty +show-face` says whether a map
+  resolved, and the README now says so.
+
+  The map is written unquoted, and `tools/check.js` refuses any terminal block
+  that quotes the family again.
+
+  **If you installed on v1.3.7 or earlier, run the install action once more** —
+  the block is replaced wholesale, nothing to clean up by hand.
+
+  From [#8](https://github.com/hhdebb/herdr-radar/pull/8), by @lunetics.
+
+- **The hand-mapping ranges in the READMEs were four codepoints short.** All
+  three said `U+E1A0–U+E1B3`; the 24th vendor moved the end to E1B7 in 1.3.6
+  and the prose never followed. The Chinese README had also drifted to `E1D1`
+  on the second range. Corrected, and `tools/check.js` now derives the ranges
+  from `lib/font.js` and fails on any README that prints a different one.
+
+- **CI.** Every push and pull request now runs the invariants, Prettier, and a
+  font-staleness check on GitHub Actions — the last three pull requests all
+  arrived with "no automated check could be run against this repository".
+  `fonttools` is pinned rather than floored: a rebuild is only byte-for-byte
+  within one version, and the staleness check depends on that.
+
 ## 1.3.7 — 2026-09-19
 
 - **Workspace indices can follow the panel's order.** Radar sorts the Agents
