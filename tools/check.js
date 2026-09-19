@@ -56,7 +56,8 @@ for (const terminal of require('../lib/font').TERMINALS) {
 // Nor may it quote the family name: terminals read the name literally, so the quotes become part of it,
 // nothing matches, and the codepoints fall through to whatever else claims the range (in the PUA, a CJK font).
 const family = require('../lib/font').FONT_FAMILY;
-const quotesFamily = new RegExp(`["']${family.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}["']`);
+// Whitespace inside the quotes is still a quoted name, just a worse one.
+const quotesFamily = new RegExp(`["']\\s*${family.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*["']`);
 for (const terminal of require('../lib/font').TERMINALS) {
   const line = terminal.lines.find((text) => quotesFamily.test(text));
   if (line) {
@@ -165,9 +166,11 @@ for (const { name, point } of declared) {
 const documented = RANGES.map(([lo, hi]) => `U+${lo}\u2013U+${hi}`);
 for (const name of ['README.md', 'README.zh-CN.md', 'README.ja.md']) {
   const prose = fs.readFileSync(path.join(root, name), 'utf8');
-  // A hyphen is the same range typed on a keyboard without an en dash.
-  const printed = [...prose.matchAll(/U\+[0-9A-F]{4}[\u2013-]U\+[0-9A-F]{4}/g)].map(([text]) =>
-    text.replace('-', '\u2013'),
+  // A hyphen is the same range typed on a keyboard without an en dash, and
+  // lower-case hex is the same range too. The lookahead stops a fifth digit
+  // from being read as a correct four-digit range with a stray character.
+  const printed = [...prose.matchAll(/U\+[0-9A-F]{4}[\u2013-]U\+[0-9A-F]{4}(?![0-9A-F])/gi)].map(([text]) =>
+    text.toUpperCase().replace('-', '\u2013'),
   );
   for (const range of printed) {
     if (!documented.includes(range)) {
