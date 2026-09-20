@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.3.9 — 2026-09-20
+
+- **A workspace with a parked agent no longer reads as empty.** The Spaces
+  column picks one mark per workspace from its live agents, but it chose from a
+  list of five states while a pane's display carries one of seven: the list was
+  written before idle was split by freshness, and the two tiers it missed
+  matched nothing. A workspace whose agents were all `idle_fresh` or all
+  `idle_stale` fell through to `none` and drew the dot that means no agent is
+  there at all.
+
+  Those two tiers are most of idle's life — `idle_fresh` is the first fifteen
+  minutes after every turn, `idle_stale` everything past two hours — so the mark
+  was wrong far more often than it was right, and the Agents panel and the
+  Spaces column disagreed about the same pane. It shows up most sharply right
+  after an agent finishes: the held `done` badge expires into `idle_fresh` and
+  the workspace appears to lose its agent.
+
+  The three tiers now share the one idle cell they already share a glyph with.
+  `tools/check.js` holds the pieces together: every state reaches the priority
+  list, every token that list can yield exists, and every published token has a
+  cell to draw in — a token with no cell never draws, and one outside the
+  published set clears every state mark at once rather than mis-drawing a cell.
+
+  From [#11](https://github.com/hhdebb/herdr-radar/issues/11), by @genexk.
+
+- **The checks now have to prove they can fail.** `npm run prove` puts each
+  known-bad shape back into the source it came from, runs the invariants, and
+  restores the file: twenty-one shapes, every one a regression that was really
+  shipped or really proposed in review. It exists because one invariant here
+  could only ever pass — it carried a literal control character where an escape
+  was meant, matched nothing, and printed as though it were fine. CI runs it.
+
 ## 1.3.8 — 2026-09-19
 
 - **The Ghostty codepoint map now matches.** Since v1.0.0 the installer wrote
