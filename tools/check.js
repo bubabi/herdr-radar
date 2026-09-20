@@ -165,7 +165,9 @@ for (const { name, point } of declared) {
 // three tiers only the first list was updated, so a workspace of fresh or stale
 // agents matched nothing and drew the no-agent dot (#11). The second failure is
 // quieter still: writeSpaceState nulls every token it does not match, so a name
-// outside SPACE_TOKENS does not mis-draw one cell, it blanks the whole row.
+// outside SPACE_TOKENS does not mis-draw one cell, it clears every state mark on
+// the row at once. (The logos and the label survive it — they are written after,
+// from a separate object — so the row goes nameless rather than vanishing.)
 const state = require('../lib/state');
 const spaceTokens = new Set(state.SPACE_TOKENS);
 for (const display of state.STATES) {
@@ -177,7 +179,8 @@ for (const display of state.STATES) {
     const token = state.spaceToken(display, vendor);
     if (!spaceTokens.has(token)) {
       problems.push(
-        `spaceToken('${display}', '${vendor}') is '${token}', which is not in SPACE_TOKENS — it blanks the row`,
+        `spaceToken('${display}', '${vendor}') is '${token}', which is not in SPACE_TOKENS — ` +
+          'it clears every state mark on the row',
       );
     }
   }
@@ -188,10 +191,15 @@ for (const display of state.SPACE_PRIORITY) {
   }
 }
 // A token with no cell in the sidebar block is a mark that never draws.
+//
+// Matched with the closing quote the generated cell carries, not as a bare
+// substring: `$space_idle` occurs inside `$space_idle_fresh`, so a cell renamed
+// to something that merely starts with the published name would have satisfied
+// a substring test while the name actually published had no cell left.
 for (const variant of ['light', 'dark']) {
   const block = managed.sidebarBlock(variant);
   for (const token of state.SPACE_TOKENS) {
-    if (!block.includes(`$${token}`)) {
+    if (!block.includes(`token = "$${token}"`)) {
       problems.push(`sidebar block (${variant}): no cell for $${token}, so that mark never draws`);
     }
   }

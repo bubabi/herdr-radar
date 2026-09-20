@@ -116,7 +116,7 @@ const cases = [
     'lib/state.js',
     "return `space_${display.startsWith('idle') ? 'idle' : display}`;",
     'return `space_${display}`;',
-    'spaces: idle tier not collapsed, so the token blanks the whole row',
+    'spaces: idle tier not collapsed, so the token clears every state mark',
   ],
   // Adding rather than removing: a removed token trips the mapping check above
   // before this one, so the only way to reach it is a token nothing draws.
@@ -125,6 +125,14 @@ const cases = [
     "  'space_label',\n];",
     "  'space_label',\n  'space_never_drawn',\n];",
     'spaces: a published token with no cell in the sidebar block',
+  ],
+  // Renaming a cell to something the published name is a prefix of. A bare
+  // substring test passes this — review caught that, so it is asserted here.
+  [
+    'lib/managed-config.js',
+    "cell('$space_idle', state.idle),",
+    "cell('$space_idle_fresh', state.idle),",
+    'spaces: cell renamed to a longer name containing the published one',
   ],
 
   // lib/workspace-order.js — the order must settle or it loops over IPC.
