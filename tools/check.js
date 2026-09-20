@@ -156,6 +156,47 @@ for (const { name, point } of declared) {
   }
 }
 
+// Every display a pane can carry has to reach the Spaces column, and has to
+// land on a token that exists.
+//
+// Two lists and a mapping have to agree: STATES is what a pane's display can
+// be, SPACE_PRIORITY is which of them a workspace's single mark speaks for, and
+// spaceToken() names the cell it publishes under. When idle was split into
+// three tiers only the first list was updated, so a workspace of fresh or stale
+// agents matched nothing and drew the no-agent dot (#11). The second failure is
+// quieter still: writeSpaceState nulls every token it does not match, so a name
+// outside SPACE_TOKENS does not mis-draw one cell, it blanks the whole row.
+const state = require('../lib/state');
+const spaceTokens = new Set(state.SPACE_TOKENS);
+for (const display of state.STATES) {
+  if (!state.SPACE_PRIORITY.includes(display)) {
+    problems.push(`SPACE_PRIORITY: no entry for '${display}', so a workspace holding only those agents reads as empty`);
+  }
+  // Vendor only matters for `working`; an unbranded one must still land.
+  for (const vendor of [...palette.brandVendors, 'nosuchvendor']) {
+    const token = state.spaceToken(display, vendor);
+    if (!spaceTokens.has(token)) {
+      problems.push(
+        `spaceToken('${display}', '${vendor}') is '${token}', which is not in SPACE_TOKENS — it blanks the row`,
+      );
+    }
+  }
+}
+for (const display of state.SPACE_PRIORITY) {
+  if (!state.STATES.includes(display)) {
+    problems.push(`SPACE_PRIORITY: '${display}' is not a display any pane can carry`);
+  }
+}
+// A token with no cell in the sidebar block is a mark that never draws.
+for (const variant of ['light', 'dark']) {
+  const block = managed.sidebarBlock(variant);
+  for (const token of state.SPACE_TOKENS) {
+    if (!block.includes(`$${token}`)) {
+      problems.push(`sidebar block (${variant}): no cell for $${token}, so that mark never draws`);
+    }
+  }
+}
+
 // The ranges the READMEs print have to be the ranges the installer maps.
 //
 // A user on a terminal we do not write config for reads them and maps by hand,

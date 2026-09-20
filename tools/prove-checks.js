@@ -105,6 +105,28 @@ const cases = [
   // tools/codepoints.toml — a glyph outside every mapped range (E1B7 once was).
   ['tools/codepoints.toml', 'glm = "E1B7"', 'glm = "E1BF"', 'codepoints: glyph past the end of the mapped range'],
 
+  // lib/state.js — the Spaces column has to reach every display, on a real token.
+  [
+    'lib/state.js',
+    "const SPACE_PRIORITY = ['blocked', 'working', 'done', 'idle_fresh', 'idle', 'idle_stale', 'unknown'];",
+    "const SPACE_PRIORITY = ['blocked', 'working', 'done', 'idle', 'unknown'];",
+    'spaces: priority list misses the two idle tiers (#11, shipped v1.3.5–v1.3.8)',
+  ],
+  [
+    'lib/state.js',
+    "return `space_${display.startsWith('idle') ? 'idle' : display}`;",
+    'return `space_${display}`;',
+    'spaces: idle tier not collapsed, so the token blanks the whole row',
+  ],
+  // Adding rather than removing: a removed token trips the mapping check above
+  // before this one, so the only way to reach it is a token nothing draws.
+  [
+    'lib/state.js',
+    "  'space_label',\n];",
+    "  'space_label',\n  'space_never_drawn',\n];",
+    'spaces: a published token with no cell in the sidebar block',
+  ],
+
   // lib/workspace-order.js — the order must settle or it loops over IPC.
   [
     'lib/workspace-order.js',
